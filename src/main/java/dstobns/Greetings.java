@@ -13,7 +13,7 @@ import javax.inject.Named;
  * Defines v1 of a helloworld API, which provides simple "greeting" methods.
  */
 @Api(
-    name = "helloworld",
+    name = "dstobns",
     version = "v1",
     scopes = {Constants.EMAIL_SCOPE},
     clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID, Constants.IOS_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID},
@@ -34,6 +34,14 @@ public class Greetings {
     } catch (IndexOutOfBoundsException e) {
       throw new NotFoundException("Greeting not found with an index: " + id);
     }
+  }
+
+  // public HelloGreeting getNewGreeting(@Named("id2") Integer id) {
+  //     return new HelloGreeting("Hello Kavit");
+  // }
+  @ApiMethod(name = "greetings.newGreeting")
+  public HelloGreeting newGreeting() {
+    return new HelloGreeting("Hello Kavit!");
   }
 
   public ArrayList<HelloGreeting> listGreeting() {

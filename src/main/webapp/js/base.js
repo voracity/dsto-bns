@@ -93,7 +93,18 @@ google.devrel.samples.hello.print = function(greeting) {
  * @param {string} id ID of the greeting.
  */
 google.devrel.samples.hello.getGreeting = function(id) {
-  gapi.client.helloworld.greetings.getGreeting({'id': id}).execute(
+  gapi.client.dstobns.greetings.getGreeting({'id': id}).execute(
+      function(resp) {
+        if (!resp.code) {
+          google.devrel.samples.hello.print(resp);
+        } else {
+          window.alert(resp.message);
+        }
+      });
+};
+
+google.devrel.samples.hello.getNewGreeting = function() {
+  gapi.client.dstobns.greetings.newGreeting().execute(
       function(resp) {
         if (!resp.code) {
           google.devrel.samples.hello.print(resp);
@@ -107,7 +118,7 @@ google.devrel.samples.hello.getGreeting = function(id) {
  * Lists greetings via the API.
  */
 google.devrel.samples.hello.listGreeting = function() {
-  gapi.client.helloworld.greetings.listGreeting().execute(
+  gapi.client.dstobns.greetings.listGreeting().execute(
       function(resp) {
         if (!resp.code) {
           resp.items = resp.items || [];
@@ -125,7 +136,7 @@ google.devrel.samples.hello.listGreeting = function() {
  */
 google.devrel.samples.hello.multiplyGreeting = function(
     greeting, times) {
-  gapi.client.helloworld.greetings.multiply({
+  gapi.client.dstobns.greetings.multiply({
       'message': greeting,
       'times': times
     }).execute(function(resp) {
@@ -139,7 +150,7 @@ google.devrel.samples.hello.multiplyGreeting = function(
  * Greets the current user via the API.
  */
 google.devrel.samples.hello.authedGreeting = function(id) {
-  gapi.client.helloworld.greetings.authed().execute(
+  gapi.client.dstobns.greetings.authed().execute(
       function(resp) {
         google.devrel.samples.hello.print(resp);
       });
@@ -149,9 +160,13 @@ google.devrel.samples.hello.authedGreeting = function(id) {
  * Enables the button callbacks in the UI.
  */
 google.devrel.samples.hello.enableButtons = function() {
+  // document.getElementById('getGreeting').onclick = function() {
+  //   google.devrel.samples.hello.getGreeting(
+  //       document.getElementById('id').value);
+  // }
+
   document.getElementById('getGreeting').onclick = function() {
-    google.devrel.samples.hello.getGreeting(
-        document.getElementById('id').value);
+    google.devrel.samples.hello.getNewGreeting(); 
   }
 
   document.getElementById('listGreeting').onclick = function() {
@@ -178,7 +193,7 @@ google.devrel.samples.hello.enableButtons = function() {
  * @param {string} apiRoot Root of the API's path.
  */
 google.devrel.samples.hello.init = function(apiRoot) {
-  // Loads the OAuth and helloworld APIs asynchronously, and triggers login
+  // Loads the OAuth and dstobns APIs asynchronously, and triggers login
   // when they have completed.
   var apisToLoad;
   var callback = function() {
@@ -190,6 +205,6 @@ google.devrel.samples.hello.init = function(apiRoot) {
   }
 
   apisToLoad = 2; // must match number of calls to gapi.client.load()
-  gapi.client.load('helloworld', 'v1', callback, apiRoot);
+  gapi.client.load('dstobns', 'v1', callback, apiRoot);
   gapi.client.load('oauth2', 'v2', callback);
 };
