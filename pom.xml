@@ -45,6 +45,11 @@
             <artifactId>jdo-api</artifactId>
             <version>3.0.1</version>
         </dependency>
+        <dependency>
+      		<groupId>com.googlecode.objectify</groupId>
+      		<artifactId>objectify</artifactId>
+      		<version>5.1.5</version>
+   		</dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -74,8 +79,17 @@
     </dependencies>
 
     <build>
-        <!-- for hot reload of the web application-->
+    	<!-- for hot reload of the web application-->
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+    
+    	<!-- 
+    	Possible solutions to errors: 
+    	http://stackoverflow.com/questions/6352208/how-to-solve-plugin-execution-not-covered-by-lifecycle-configuration-for-sprin
+    	
+    	Note: adding the tag below caused the maven build to throw errors 
+    	<pluginManagement> 
+    	-->
+        
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -143,6 +157,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <!-- </pluginManagement> -->
     </build>
 
 </project>
