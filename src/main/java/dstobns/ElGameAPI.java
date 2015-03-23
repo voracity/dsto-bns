@@ -6,6 +6,9 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
+import static dstobns.OfyService.ofy;
+import com.googlecode.objectify.Key;
+
 import javax.inject.Named;
 
 /**
@@ -24,11 +27,20 @@ public class ElGameAPI {
   public Profile setDisplayName(final User user, @Named("name") String name) throws UnauthorizedException {
 	  
 	  if (user == null) {
-	      throw new UnauthorizedException("Authorization required");
-	    }
+		  throw new UnauthorizedException("Authorization required");
+	  }
 	  
-	  Profile profile = new Profile(user);
+	  String userId = user.getUserId();
+	  
+	  // Get the Profile from the datastore if it exists, otherwise create a new one
+      Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
+      if (profile == null) profile = new Profile(user); 
+      
 	  profile.setDisplayName(name);
+	  
+	  // Save the entity in the datastore
+      ofy().save().entity(profile).now();
+      
 	  return profile;
 	  
   }
@@ -37,8 +49,11 @@ public class ElGameAPI {
   public BNVariable storeVariable(final User user, BNVariable variable) throws UnauthorizedException {
 	  
 	  if (user == null) {
-	      throw new UnauthorizedException("Authorization required");
-	    }
+		  throw new UnauthorizedException("Authorization required");
+	  }
+	  
+	  // Save the entity in the datastore
+      ofy().save().entity(variable).now();
 	  
 	  return variable;
 	  
@@ -50,7 +65,19 @@ public class ElGameAPI {
       throw new UnauthorizedException("Authorization required");
     }
     
-    return new Profile(user);
+    String userId = user.getUserId();
+    Key key = Key.create(Profile.class, userId);
+
+    // Get the Profile from the datastore if it exists, otherwise create a new one
+    Profile profile = (Profile) ofy().load().key(key).now();
+    if (profile == null) {
+    	profile = new Profile(user); 
+    	// Save the entity in the datastore
+        ofy().save().entity(profile).now();
+    }
+    
+    return profile;
+    
   }
 
   

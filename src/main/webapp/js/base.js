@@ -144,7 +144,7 @@ elgame.storeVariable = function(name, label) {
 elgame.enableButtons = function() {
 
   document.getElementById('setDisplayName').onclick = function() {
-    elgame.outputDisplayName(
+    elgame.setDisplayName(
     		document.getElementById('dispName').value); 
   }
 
