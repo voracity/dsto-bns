@@ -171,6 +171,9 @@ elgame.init = function(apiRoot) {
     if (--apisToLoad == 0) {
       elgame.enableButtons();
       elgame.signin(true, elgame.userAuthed); 
+      angular.bootstrap(document, []); // Bootstrap the angular module after loading the 
+		// Google libraries so the Google JavaScript library 
+		// is ready in the angular modules.
     }
   }
 

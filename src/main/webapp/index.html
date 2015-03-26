@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="elgameApp">
 <head>
-    <title>Hello Endpoints!</title>
+    <title>The Elicitation Game!</title>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
     <script type="text/javascript" src="/js/base.js"></script>
+    <script type="text/javascript" src="/js/controllers.js"></script>
     <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.css">
     <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.css">
     <link type="text/css" rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body ng-controller="BNVariablesController">
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -40,7 +42,14 @@
         <div><span class="label">Label: </span><input id="label" /></div>
         <div><input id="storeVariable" type="submit" class="btn btn-small" value="Submit"></div>
     </form>
-
+    
+    <ul>
+    	<li ng-repeat="phone in phones">
+      		<span>{{phone.name}}</span>
+      		<p>{{phone.snippet}}</p>
+   		</li>
+  	</ul>
+  	
     <script type="text/javascript">
         function init() {
             elgame.init('//' + window.location.host + '/_ah/api');
