@@ -1,3 +1,4 @@
+'use strict'; // so that using undeclared variables will cause an error 
 
 /**
  * @fileoverview
@@ -171,9 +172,8 @@ elgame.init = function(apiRoot) {
     if (--apisToLoad == 0) {
       elgame.enableButtons();
       elgame.signin(true, elgame.userAuthed); 
-      angular.bootstrap(document, []); // Bootstrap the angular module after loading the 
-		// Google libraries so the Google JavaScript library 
-		// is ready in the angular modules.
+      angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
+		// Google libraries so the Google JavaScript library is ready in the angular modules.
     }
   }
 
@@ -181,3 +181,43 @@ elgame.init = function(apiRoot) {
   gapi.client.load('elgameapi', 'v1', callback, apiRoot);
   gapi.client.load('oauth2', 'v2', callback);
 };
+
+/**
+ * @ngdoc object
+ * @name elgameAngApp
+ * @requires $routeProvider
+ * @requires conferenceControllers
+ * @requires ui.bootstrap
+ *
+ * @description
+ * Root app, which routes and specifies the partial html and controller depending on the url requested.
+ *
+ */
+var angApp = angular.module('elgameAngApp',
+    ['elgameControllers', 'ngRoute']).config(['$routeProvider',
+        function ($routeProvider) {
+            $routeProvider.
+                when('/questions', {
+                    templateUrl: '/partials/questions.html',
+                    controller: 'ShowQuestionsCtrl'
+                }).
+                when('/conference/create', {
+                    templateUrl: '/partials/create_conferences.html',
+                    controller: 'CreateConferenceCtrl'
+                }).
+                when('/conference/detail/:websafeConferenceKey', {
+                    templateUrl: '/partials/conference_detail.html',
+                    controller: 'ConferenceDetailCtrl'
+                }).
+                when('/profile', {
+                    templateUrl: '/partials/profile.html',
+                    controller: 'MyProfileCtrl'
+                }).
+                when('/', {
+                    templateUrl: '/partials/home.html'
+                }).
+                otherwise({
+                    redirectTo: '/'
+                });
+        }]);
+
