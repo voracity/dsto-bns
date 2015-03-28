@@ -39,9 +39,9 @@ elgame.userAuthed = function() {
   var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
     if (!resp.code) {
       elgame.signedIn = true;
-      document.getElementById('signinButton').innerHTML = 'Sign out';
-      document.getElementById('setDisplayName').disabled = false;
-      document.getElementById('storeVariable').disabled = false;
+//      document.getElementById('signinButton').innerHTML = 'Sign out';
+//      document.getElementById('setDisplayName').disabled = false;
+//      document.getElementById('storeVariable').disabled = false;
       elgame.getProfile(); 
     }
   });
@@ -65,22 +65,11 @@ elgame.auth = function() {
     elgame.signin(false, elgame.userAuthed);
   } else {
     elgame.signedIn = false;
-    document.getElementById('signinButton').innerHTML = 'Sign in';
-    document.getElementById('setDisplayName').disabled = true;
-    document.getElementById('storeVariable').disabled = true;
+//    document.getElementById('signinButton').innerHTML = 'Sign in';
+//    document.getElementById('setDisplayName').disabled = true;
+//    document.getElementById('storeVariable').disabled = true;
     elgame.outputDisplayName('Not logged in.'); 
   }
-};
-
-/**
- * Prints a message to the message log.
- * param {Object} message Message to print.
- */
-elgame.print = function(message) {
-  var element = document.createElement('div');
-  element.classList.add('row');
-  element.innerHTML = message;
-  document.getElementById('outputLog').appendChild(element);
 };
 
 /**
@@ -144,20 +133,20 @@ elgame.storeVariable = function(name, label) {
  */
 elgame.enableButtons = function() {
 
-  document.getElementById('setDisplayName').onclick = function() {
-    elgame.setDisplayName(
-    		document.getElementById('dispName').value); 
-  }
-
-  document.getElementById('storeVariable').onclick = function() {
-    elgame.storeVariable(
-        document.getElementById('name').value,
-        document.getElementById('label').value);
-  }
-  
-  document.getElementById('signinButton').onclick = function() {
-    elgame.auth();
-  }
+//  document.getElementById('setDisplayName').onclick = function() {
+//    elgame.setDisplayName(
+//    		document.getElementById('dispName').value); 
+//  }
+//
+//  document.getElementById('storeVariable').onclick = function() {
+//    elgame.storeVariable(
+//        document.getElementById('name').value,
+//        document.getElementById('label').value);
+//  }
+//  
+//  document.getElementById('signinButton').onclick = function() {
+//    elgame.auth();
+//  }
 };
 
 /**
