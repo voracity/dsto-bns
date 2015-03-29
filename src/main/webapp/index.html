@@ -1,61 +1,76 @@
 <!DOCTYPE html>
-<html ng-app="elgameApp">
+<html>
 <head>
     <title>The Elicitation Game!</title>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-    <script type="text/javascript" src="/js/base.js"></script>
-    <script type="text/javascript" src="/js/controllers.js"></script>
+    
     <link type="text/css" rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link type="text/css" rel="stylesheet" href="bootstrap/css/bootstrap-responsive.css">
     <link type="text/css" rel="stylesheet" href="css/style.css">
 </head>
-<body ng-controller="BNVariablesController">
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="brand" href="#">The Elicitation Game!</a>
-            <div class="nav-collapse collapse pull-right">
-                <a id="displayName" class="brand" href="#">Checking Status...</a>
-                <a href="javascript:void(0);" class="btn" id="signinButton">Sign in</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
+<body>
+	<nav ng-controller="RootCtrl" class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#elgame-navbar-collapse">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">The Elicitation Game</a>
+	    </div>
+	
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="elgame-navbar-collapse">
+	      <ul class="nav navbar-nav">
+	        <li ng-class="{ active: isActive('questions')}" ng-click="collapseNavbar()"><a href="#/questions">Questions</a></li>
+	        <!-- <li class="active"><a href="#">Questions<span class="sr-only">(current)</span></a></li> -->
+	        <!-- <li class="active"><a href="#">Questions<span class="sr-only">(current)</span></a></li> -->
+	        <li><a href="#">Admin</a></li>
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a href="#">Action</a></li>
+	            <li><a href="#">Another action</a></li>
+	            <li><a href="#">Something else here</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">Separated link</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">One more separated link</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	      	<!-- <li id="displayName" class="brand" href="#">Checking Status...</a>
+	        <li href="javascript:void(0);" class="btn" id="signinButton">Sign in</a> -->
+	        <!-- <p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">Mark Otto</a></p> -->
+	        <ul class="nav navbar-nav navbar-right">
+                <li id="signInLink" ng-hide="getSignedInState()"><a ng-click="signIn(); collapseNavbar()">Google+ SignIn</a></li>
+                <li id="signOutLink" ng-show="getSignedInState()"><a ng-click="signOut(); collapseNavbar()">Log out</a></li>
+            </ul>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
 
-    <div id="outputLog"></div>
+	<div class="container"> 
+	    <ng-view></ng-view>
+	</div>
 
-    <form action="javascript:void(0);">
-        <h2>Profile</h2>
-        <div><span class="label">Display Name: </span><input id="dispName" /></div>
-        <div><input id="setDisplayName" type="submit" class="btn btn-small" value="Submit"></div>
-    </form>
-    
-    <form action="javascript:void(0);">
-        <h2>Store Variable</h2>
-        <div><span class="label">Name: </span><input id="name" /></div>
-        <div><span class="label">Label: </span><input id="label" /></div>
-        <div><input id="storeVariable" type="submit" class="btn btn-small" value="Submit"></div>
-    </form>
-    
-    <ul>
-    	<li ng-repeat="phone in phones">
-      		<span>{{phone.name}}</span>
-      		<p>{{phone.snippet}}</p>
-   		</li>
-  	</ul>
-  	
-    <script type="text/javascript">
-        function init() {
-            elgame.init('//' + window.location.host + '/_ah/api');
-        }
-    </script>
-    <script src="https://apis.google.com/js/client.js?onload=init"></script>
-</div>
+	<div class="container">
+	  	
+	  	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+	  	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.js"></script>
+	    <script type="text/javascript" src="/js/base.js"></script>
+	    <script type="text/javascript" src="/js/controllers.js"></script>
+	  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	    <script src="bootstrap/js/bootstrap.min.js"></script>
+	    <script type="text/javascript">
+	        function init() {
+	            elgame.init('//' + window.location.host + '/_ah/api');
+	        }
+	    </script>
+	    <script src="https://apis.google.com/js/client.js?onload=init"></script>
+	</div>
 </body>
 </html>

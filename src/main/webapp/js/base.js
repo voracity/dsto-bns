@@ -1,3 +1,4 @@
+'use strict'; // so that using undeclared variables will cause an error 
 
 /**
  * @fileoverview
@@ -38,9 +39,9 @@ elgame.userAuthed = function() {
   var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
     if (!resp.code) {
       elgame.signedIn = true;
-      document.getElementById('signinButton').innerHTML = 'Sign out';
-      document.getElementById('setDisplayName').disabled = false;
-      document.getElementById('storeVariable').disabled = false;
+//      document.getElementById('signinButton').innerHTML = 'Sign out';
+//      document.getElementById('setDisplayName').disabled = false;
+//      document.getElementById('storeVariable').disabled = false;
       elgame.getProfile(); 
     }
   });
@@ -64,22 +65,11 @@ elgame.auth = function() {
     elgame.signin(false, elgame.userAuthed);
   } else {
     elgame.signedIn = false;
-    document.getElementById('signinButton').innerHTML = 'Sign in';
-    document.getElementById('setDisplayName').disabled = true;
-    document.getElementById('storeVariable').disabled = true;
+//    document.getElementById('signinButton').innerHTML = 'Sign in';
+//    document.getElementById('setDisplayName').disabled = true;
+//    document.getElementById('storeVariable').disabled = true;
     elgame.outputDisplayName('Not logged in.'); 
   }
-};
-
-/**
- * Prints a message to the message log.
- * param {Object} message Message to print.
- */
-elgame.print = function(message) {
-  var element = document.createElement('div');
-  element.classList.add('row');
-  element.innerHTML = message;
-  document.getElementById('outputLog').appendChild(element);
 };
 
 /**
@@ -143,20 +133,20 @@ elgame.storeVariable = function(name, label) {
  */
 elgame.enableButtons = function() {
 
-  document.getElementById('setDisplayName').onclick = function() {
-    elgame.setDisplayName(
-    		document.getElementById('dispName').value); 
-  }
-
-  document.getElementById('storeVariable').onclick = function() {
-    elgame.storeVariable(
-        document.getElementById('name').value,
-        document.getElementById('label').value);
-  }
-  
-  document.getElementById('signinButton').onclick = function() {
-    elgame.auth();
-  }
+//  document.getElementById('setDisplayName').onclick = function() {
+//    elgame.setDisplayName(
+//    		document.getElementById('dispName').value); 
+//  }
+//
+//  document.getElementById('storeVariable').onclick = function() {
+//    elgame.storeVariable(
+//        document.getElementById('name').value,
+//        document.getElementById('label').value);
+//  }
+//  
+//  document.getElementById('signinButton').onclick = function() {
+//    elgame.auth();
+//  }
 };
 
 /**
@@ -171,9 +161,8 @@ elgame.init = function(apiRoot) {
     if (--apisToLoad == 0) {
       elgame.enableButtons();
       elgame.signin(true, elgame.userAuthed); 
-      angular.bootstrap(document, []); // Bootstrap the angular module after loading the 
-		// Google libraries so the Google JavaScript library 
-		// is ready in the angular modules.
+      angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
+		// Google libraries so the Google JavaScript library is ready in the angular modules.
     }
   }
 
@@ -181,3 +170,43 @@ elgame.init = function(apiRoot) {
   gapi.client.load('elgameapi', 'v1', callback, apiRoot);
   gapi.client.load('oauth2', 'v2', callback);
 };
+
+/**
+ * @ngdoc object
+ * @name elgameAngApp
+ * @requires $routeProvider
+ * @requires conferenceControllers
+ * @requires ui.bootstrap
+ *
+ * @description
+ * Root app, which routes and specifies the partial html and controller depending on the url requested.
+ *
+ */
+var angApp = angular.module('elgameAngApp',
+    ['elgameControllers', 'ngRoute']).config(['$routeProvider',
+        function ($routeProvider) {
+            $routeProvider.
+                when('/questions', {
+                    templateUrl: '/partials/questions.html',
+                    controller: 'ShowQuestionsCtrl'
+                }).
+                when('/conference/create', {
+                    templateUrl: '/partials/create_conferences.html',
+                    controller: 'CreateConferenceCtrl'
+                }).
+                when('/conference/detail/:websafeConferenceKey', {
+                    templateUrl: '/partials/conference_detail.html',
+                    controller: 'ConferenceDetailCtrl'
+                }).
+                when('/profile', {
+                    templateUrl: '/partials/profile.html',
+                    controller: 'MyProfileCtrl'
+                }).
+                when('/', {
+                    templateUrl: '/partials/home.html'
+                }).
+                otherwise({
+                    redirectTo: '/'
+                });
+        }]);
+
