@@ -12,105 +12,6 @@
 var elgame = elgame || {};
 
 /**
- * Client ID of the application (from the APIs Console).
- * @type {string}
- */
-elgame.CLIENT_ID =
-    '301169776727-fafp837c210nmefpi29phjnrpcmq58j7.apps.googleusercontent.com';
-
-/**
- * Scopes used by the application.
- * @type {string}
- */
-elgame.SCOPES =
-    'https://www.googleapis.com/auth/userinfo.email';
-
-/**
- * Whether or not the user is signed in.
- * @type {boolean}
- */
-elgame.signedIn = false;
-
-/**
- * Loads the application UI after the user has completed auth. 
- * Also retrieves the profile. 
- */
-elgame.userAuthed = function() {
-  var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
-    if (!resp.code) {
-      elgame.signedIn = true;
-//      document.getElementById('signinButton').innerHTML = 'Sign out';
-//      document.getElementById('setDisplayName').disabled = false;
-//      document.getElementById('storeVariable').disabled = false;
-      elgame.getProfile(); 
-    }
-  });
-};
-
-/**
- * Handles the auth flow, with the given value for immediate mode.
- * @param {boolean} mode Whether or not to use immediate mode.
- * @param {Function} callback Callback to call on completion.
- */
-elgame.signin = function(mode, callback) {
-  gapi.auth.authorize({client_id: elgame.CLIENT_ID,
-      scope: elgame.SCOPES, immediate: mode}, callback);
-};
-
-/**
- * Presents the user with the authorization popup.
- */
-elgame.auth = function() {
-  if (!elgame.signedIn) {
-    elgame.signin(false, elgame.userAuthed);
-  } else {
-    elgame.signedIn = false;
-//    document.getElementById('signinButton').innerHTML = 'Sign in';
-//    document.getElementById('setDisplayName').disabled = true;
-//    document.getElementById('storeVariable').disabled = true;
-    elgame.outputDisplayName('Not logged in.'); 
-  }
-};
-
-/**
- * Sets the display name in the banner.
- * param {Object} profile Profile with display name.
- */
-elgame.outputDisplayName = function(name) {
-  document.getElementById('displayName').innerHTML = name;
-};
-
-/**
- * Sets the user's display name via the API.
- * @param {string} name Display name for the profile.
- */
-elgame.setDisplayName = function(name) {
-  gapi.client.elgameapi.setDisplayName({'name': name}).execute(
-      function(resp) {
-        if (!resp.code) {
-          elgame.outputDisplayName("Welcome "+resp.displayName);
-        } else {
-          window.alert(resp.message);
-        }
-      });
-};
-
-/**
- * Retrieves the profile for the current user via the API.
- * Also sets the display name. 
- */
-elgame.getProfile = function() {
-  gapi.client.elgameapi.getProfile().execute(
-      function(resp) {
-        if (!resp.code) {
-          elgame.outputDisplayName("Welcome "+resp.displayName);
-        } else {
-          window.alert(resp.message);
-        }
-      });
-};
-
-/**
  * Stores a variable via the API.
  * @param {string} name Name of the variable.
  * @param {string} label Human readable label.
@@ -128,26 +29,6 @@ elgame.storeVariable = function(name, label) {
       });
 };
 
-/**
- * Enables the button callbacks in the UI.
- */
-elgame.enableButtons = function() {
-
-//  document.getElementById('setDisplayName').onclick = function() {
-//    elgame.setDisplayName(
-//    		document.getElementById('dispName').value); 
-//  }
-//
-//  document.getElementById('storeVariable').onclick = function() {
-//    elgame.storeVariable(
-//        document.getElementById('name').value,
-//        document.getElementById('label').value);
-//  }
-//  
-//  document.getElementById('signinButton').onclick = function() {
-//    elgame.auth();
-//  }
-};
 
 /**
  * Initializes the application.
@@ -159,8 +40,6 @@ elgame.init = function(apiRoot) {
   var apisToLoad;
   var callback = function() {
     if (--apisToLoad == 0) {
-      elgame.enableButtons();
-      elgame.signin(true, elgame.userAuthed); 
       angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
 		// Google libraries so the Google JavaScript library is ready in the angular modules.
     }
@@ -210,3 +89,69 @@ var angApp = angular.module('elgameAngApp',
                 });
         }]);
 
+/**
+ * @ngdoc service
+ * @name oauth2Provider
+ *
+ * @description
+ * Service that holds the OAuth2 information shared across all the pages.
+ *
+ */
+angApp.factory('oauth2Provider', function ($modal) {
+    var oauth2Provider = {
+        CLIENT_ID: '301169776727-fafp837c210nmefpi29phjnrpcmq58j7.apps.googleusercontent.com',
+        SCOPES: 'email',
+        signedIn: false
+    };
+
+    /**
+     * Calls the OAuth2 authentication method.
+     */
+    oauth2Provider.signIn = function (callback) {
+        gapi.auth.signIn({
+            'clientid': oauth2Provider.CLIENT_ID,
+            'cookiepolicy': 'single_host_origin',
+            'accesstype': 'online',
+            'approveprompt': 'auto',
+            'scope': oauth2Provider.SCOPES,
+            'callback': callback
+        });
+    };
+
+    /**
+     * Logs out the user.
+     */
+    oauth2Provider.signOut = function () {
+        gapi.auth.signOut();
+        // Explicitly set the invalid access token in order to make the API calls fail.
+        gapi.auth.setToken({access_token: ''})
+        oauth2Provider.signedIn = false;
+    };
+
+    /**
+     * Shows the modal with Google+ sign in button.
+     *
+     * @returns {*|Window}
+     */
+    oauth2Provider.showLoginModal = function() {
+        var modalInstance = $modal.open({
+            templateUrl: '/partials/login.modal.html',
+            controller: 'OAuth2LoginModalCtrl'
+        });
+        return modalInstance;
+    };
+
+    return oauth2Provider;
+});
+
+/**
+ * @ngdoc constant
+ * @name HTTP_ERRORS
+ *
+ * @description
+ * Holds the constants that represent HTTP error codes.
+ *
+ */
+angApp.constant('HTTP_ERRORS', {
+    'UNAUTHORIZED': 401
+});
