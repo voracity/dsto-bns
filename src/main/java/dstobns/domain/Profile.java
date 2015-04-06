@@ -1,4 +1,4 @@
-package dstobns;
+package dstobns.domain;
 
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;

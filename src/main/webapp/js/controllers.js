@@ -160,3 +160,67 @@ elgameAngApp.controllers.controller('ShowQuestionsCtrl',
     })
 ;
 
+/**
+ * @ngdoc controller
+ * @name BalanceCtrl
+ *
+ * @description
+ * A controller used for the Balance page.
+ */
+elgameAngApp.controllers.controller('NewVariableCtrl', function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
+
+        /**
+         * The conference object being edited in the page.
+         * @type {{}|*}
+         */
+        $scope.bnvariable = $scope.bnvariable || {};
+
+        /**
+         * Tests if $scope.bnvariable is valid.
+         * @param addTransactionForm the form object from the balance.html page.
+         * @returns {boolean|*} true if valid, false otherwise.
+         */
+        $scope.isValidVariable = function (NewVariableForm) {
+            return !NewVariableForm.$invalid
+        }
+
+        /**
+         * Invokes the elgameapi.saveVariable API.
+         *
+         * @param NewVariableForm the $scope.bnvariable     */
+        $scope.saveVariable = function (NewVariableForm) {
+            if (!$scope.isValidVariable(NewVariableForm)) {
+                return;
+            }
+
+            $scope.loading = true;
+            gapi.client.elgameapi.saveVariable($scope.bnvariable).
+                execute(function (resp) {
+                    $scope.$apply(function () {
+                        $scope.loading = false;
+                        if (resp.error) {
+                            // The request has failed.
+                            var errorMessage = resp.error.message || '';
+                            $scope.messages = 'Failed to save a new variable : ' + errorMessage;
+                            $scope.alertStatus = 'warning';
+                            $log.error($scope.messages + ' Transaction : ' + JSON.stringify($scope.transaction));
+
+                            if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                                oauth2Provider.showLoginModal();
+                                return;
+                            }
+                        } else {
+                            // The request has succeeded.
+                            $scope.messages = 'The variable has been created : $' + resp.result.name;
+                            $scope.alertStatus = 'success';
+                            $scope.submitted = false;
+                            $scope.bnvariable = {};
+                            $log.info($scope.messages + ' : ' + JSON.stringify(resp.result));
+                        }
+                        
+                    });
+                });
+        };
+        
+});
+

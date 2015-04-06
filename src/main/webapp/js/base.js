@@ -69,6 +69,10 @@ var angApp = angular.module('elgameAngApp',
                     templateUrl: '/partials/questions.html',
                     controller: 'ShowQuestionsCtrl'
                 }).
+                when('/new_variable', {
+                    templateUrl: '/partials/new_variable.html',
+                    controller: 'NewVariableCtrl'
+                }).
                 when('/conference/create', {
                     templateUrl: '/partials/create_conferences.html',
                     controller: 'CreateConferenceCtrl'

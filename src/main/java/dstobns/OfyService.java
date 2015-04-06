@@ -1,7 +1,8 @@
 package dstobns;
 
-import dstobns.Profile;
-import dstobns.BNVariable;
+import dstobns.domain.BNVariable;
+import dstobns.domain.Profile;
+
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;

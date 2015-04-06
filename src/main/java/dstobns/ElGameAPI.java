@@ -2,12 +2,18 @@ package dstobns;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 //import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
 import static dstobns.OfyService.ofy;
+
 import com.googlecode.objectify.Key;
+
+import dstobns.domain.BNVariable;
+import dstobns.domain.Profile;
+import dstobns.forms.NewVariableForm;
 
 import javax.inject.Named;
 
@@ -57,6 +63,27 @@ public class ElGameAPI {
 	  
 	  return variable;
 	  
+  }
+  
+  // Declare this method as a method available externally through Endpoints
+  @ApiMethod(name = "saveVariable", path = "put-variable", httpMethod = HttpMethod.POST)
+  // The request that invokes this method should provide data that
+  // conforms to the fields defined in NewVariableForm
+  public BNVariable saveVariable(final User user, NewVariableForm newVariableForm)
+          throws UnauthorizedException {
+
+      // If the user is not logged in, throw an UnauthorizedException
+      if (user == null) {
+          throw new UnauthorizedException("Authorization required");
+      }
+      
+      BNVariable variable = new BNVariable(newVariableForm); 
+      
+      // Save the entity in the datastore
+      ofy().save().entity(variable).now();
+
+      // Return the profile
+      return variable;
   }
 
   @ApiMethod(name = "getProfile", path = "getProfile")
