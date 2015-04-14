@@ -15,7 +15,7 @@ var elgameAngApp = elgameAngApp || {};
  * Angular module for controllers.
  *
  */
-elgameAngApp.controllers = angular.module('elgameControllers', ['ui.bootstrap']);
+elgameAngApp.controllers = angular.module('elgameControllers', ['ui.bootstrap', 'ngSanitize', 'ui.select']);
 
 /**
  * @ngdoc controller
@@ -126,101 +126,159 @@ elgameAngApp.controllers.controller('OAuth2LoginModalCtrl',
         };
     });
 
-/**
- * @ngdoc controller
- * @name ShowQuestionsCtrl
- *
- * @description
- * A controller used for the My Profile page.
- */
-elgameAngApp.controllers.controller('ShowQuestionsCtrl',
-    function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
-        $scope.submitted = false;
-        $scope.loading = false;
-
-        /**
-         * The initial profile retrieved from the server to know the dirty state.
-         * @type {{}}
-         */
-        $scope.initialProfile = {};
-
-        /**
-         * Candidates for the teeShirtSize select box.
-         * @type {string[]}
-         */
-        $scope.teeShirtSizes = [
-            'XS',
-            'S',
-            'M',
-            'L',
-            'XL',
-            'XXL',
-            'XXXL'
-        ];
-    })
-;
 
 /**
  * @ngdoc controller
- * @name BalanceCtrl
+ * @name NewVariableCtrl
  *
  * @description
- * A controller used for the Balance page.
+ * A controller used for the new_variable page, where a variable can be created and stored. 
  */
-elgameAngApp.controllers.controller('NewVariableCtrl', function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
+elgameAngApp.controllers.controller('EditVariablesCtrl', function ($scope, $log, oauth2Provider, HTTP_ERRORS) {
+	
+	/**
+     * A bnvariable object used to save a variable via the API.
+     * @type {{}|*}
+     */
+    $scope.bnvariable = $scope.bnvariable || {}; 
+    
+    /**
+     * Tests if $scope.bnvariable is valid.
+     * @param NewVariableForm the form object from the edit_variables.html page.
+     * @returns {boolean|*} true if valid, false otherwise.
+     */
+    $scope.isValidVariable = function (NewVariableForm) {
+        return !NewVariableForm.$invalid
+    }; 
+    
+    // setup a new bnvariable object that can be selected to create a new variable and add to the list 
+	$scope.bnvariableAsync = {selected : {
+								'uniqueId' : null, 
+								'name' : "New Variable", 
+								'label' : "", 
+								'states' : "" }
+	}; 
+	$scope.bnvariablesAsync = [$scope.bnvariableAsync.selected];
+	
+	/**
+     * Invokes the elgameapi.retreiveVariables API call.
+     * @param 
+     * @returns {|*} array of bnvariable objects. 
+     */
+	gapi.client.elgameapi.retrieveVariables().execute(function (resp) {
+        $scope.$apply(function () {
+            $scope.loading = false;
+            if (resp.error) {
+                // The request has failed.
+                var errorMessage = resp.error.message || '';
+                $scope.messages = 'Failed to retreive variables : ' + errorMessage;
+                $scope.alertStatus = 'warning';
+                $log.error($scope.messages + ' BNVariables : ' + JSON.stringify($scope.transaction));
 
-        /**
-         * The conference object being edited in the page.
-         * @type {{}|*}
-         */
-        $scope.bnvariable = $scope.bnvariable || {};
+                if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                    oauth2Provider.showLoginModal();
+                    return;
+                }
+            } else {
+                // The request has succeeded.
+                $scope.messages = 'The variables were retreived.';
+                $scope.alertStatus = 'success';
+                $scope.submitted = false;
+                $log.info($scope.messages + ' : ' + JSON.stringify(resp.result));
+                $scope.bnvariablesAsync = $scope.bnvariablesAsync.concat(resp.result.items); 
+            }
+            
+        });
+	});
 
-        /**
-         * Tests if $scope.bnvariable is valid.
-         * @param addTransactionForm the form object from the balance.html page.
-         * @returns {boolean|*} true if valid, false otherwise.
-         */
-        $scope.isValidVariable = function (NewVariableForm) {
-            return !NewVariableForm.$invalid
+    /**
+     * Invokes the elgameapi.saveVariable API.
+     * @param NewVariableForm the $scope.bnvariable     
+     * */
+    $scope.saveVariable = function (NewVariableForm) {
+        if (!$scope.isValidVariable(NewVariableForm)) {
+            return;
+        }
+        
+        $scope.loading = true;
+        gapi.client.elgameapi.saveVariable({
+        	'uniqueId' : $scope.bnvariableAsync.selected.uniqueId, 
+        	'name' : $scope.bnvariableAsync.selected.name, 
+        	'label' : $scope.bnvariableAsync.selected.label, 
+        	'states' : $scope.bnvariableAsync.selected.states 
+        })
+        	.execute(function (resp) {
+                $scope.$apply(function () {
+                    $scope.loading = false;
+                    if (resp.error) {
+                        // The request has failed.
+                        var errorMessage = resp.error.message || '';
+                        $scope.messages = 'Failed to save a new variable : ' + errorMessage;
+                        $scope.alertStatus = 'warning';
+                        $log.error($scope.messages + ' Transaction : ' + JSON.stringify($scope.transaction));
+
+                        if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
+                            oauth2Provider.showLoginModal();
+                            return;
+                        }
+                    } else {
+                        // The request has succeeded.
+                        $scope.messages = 'The variable has been saved in the datastore: ' + resp.result.name;
+                        $scope.alertStatus = 'success';
+                        $scope.submitted = false;
+                        $scope.bnvariable = {};
+                        // setup a new bnvariable object that can be selected to create a new variable and add to the list 
+                    	$scope.bnvariableAsync = {selected : {
+                    								'uniqueId' : null, 
+                    								'name' : "New Variable", 
+                    								'label' : "", 
+                    								'states' : "" }
+                    	}; 
+                    	$scope.bnvariablesAsync = [$scope.bnvariableAsync.selected].concat($scope.bnvariablesAsync);
+                        $log.info($scope.messages + ' : ' + JSON.stringify(resp.result));
+                    }
+                    
+                });
+            });
+    };
+        
+});
+
+/**
+ * This filter is required for ui-select to work, their comments were: 
+ * AngularJS default filter with the following expression:
+ * "person in people | filter: {name: $select.search, age: $select.search}"
+ * performs a AND between 'name: $select.search' and 'age: $select.search'.
+ * We want to perform a OR.
+ */
+elgameAngApp.controllers.filter('propsFilter', function() {
+  return function(items, props) {
+    var out = [];
+
+    if (angular.isArray(items)) {
+      items.forEach(function(item) {
+        var itemMatches = false;
+
+        var keys = Object.keys(props);
+        for (var i = 0; i < keys.length; i++) {
+          var prop = keys[i];
+          var text = props[prop].toLowerCase();
+          if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+            itemMatches = true;
+            break;
+          }
         }
 
-        /**
-         * Invokes the elgameapi.saveVariable API.
-         *
-         * @param NewVariableForm the $scope.bnvariable     */
-        $scope.saveVariable = function (NewVariableForm) {
-            if (!$scope.isValidVariable(NewVariableForm)) {
-                return;
-            }
+        if (itemMatches) {
+          out.push(item);
+        }
+      });
+    } else {
+      // Let the output be the input untouched
+      out = items;
+    }
 
-            $scope.loading = true;
-            gapi.client.elgameapi.saveVariable($scope.bnvariable).
-                execute(function (resp) {
-                    $scope.$apply(function () {
-                        $scope.loading = false;
-                        if (resp.error) {
-                            // The request has failed.
-                            var errorMessage = resp.error.message || '';
-                            $scope.messages = 'Failed to save a new variable : ' + errorMessage;
-                            $scope.alertStatus = 'warning';
-                            $log.error($scope.messages + ' Transaction : ' + JSON.stringify($scope.transaction));
-
-                            if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
-                                oauth2Provider.showLoginModal();
-                                return;
-                            }
-                        } else {
-                            // The request has succeeded.
-                            $scope.messages = 'The variable has been created : $' + resp.result.name;
-                            $scope.alertStatus = 'success';
-                            $scope.submitted = false;
-                            $scope.bnvariable = {};
-                            $log.info($scope.messages + ' : ' + JSON.stringify(resp.result));
-                        }
-                        
-                    });
-                });
-        };
-        
+    return out;
+  }
 });
 

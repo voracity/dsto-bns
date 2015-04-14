@@ -6,8 +6,6 @@ import java.util.List;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-import dstobns.forms.NewVariableForm;
-
 @Entity
 public class BNVariable {
 
@@ -18,10 +16,11 @@ public class BNVariable {
 
   private BNVariable() {};
 
-  public BNVariable(NewVariableForm form) {
-	  this.name = form.getName(); 
-	  this.label = form.getLabel(); 
-	  this.states = Arrays.asList(form.getStates().split(",[ ]*"));
+  public BNVariable(Long uniqueId, String name, String label, String statesStr) {
+	  this.uniqueId = uniqueId; 
+	  this.name = name; 
+	  this.label = label; 
+	  this.states = Arrays.asList(statesStr.split(",[ ]*"));
   }
   
 public Long getUniqueId() {

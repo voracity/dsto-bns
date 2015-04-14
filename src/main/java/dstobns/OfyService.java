@@ -1,5 +1,6 @@
 package dstobns;
 
+import dstobns.domain.Answer;
 import dstobns.domain.BNVariable;
 import dstobns.domain.Profile;
 
@@ -16,6 +17,7 @@ public class OfyService {
      */
     static {
         factory().register(BNVariable.class);
+        factory().register(Answer.class);
         factory().register(Profile.class);
     }
 
