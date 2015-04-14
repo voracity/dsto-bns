@@ -1,7 +1,9 @@
 package dstobns;
 
-import dstobns.Profile;
-import dstobns.BNVariable;
+import dstobns.domain.Answer;
+import dstobns.domain.BNVariable;
+import dstobns.domain.Profile;
+
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
@@ -15,6 +17,7 @@ public class OfyService {
      */
     static {
         factory().register(BNVariable.class);
+        factory().register(Answer.class);
         factory().register(Profile.class);
     }
 
