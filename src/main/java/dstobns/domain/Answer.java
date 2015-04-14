@@ -12,14 +12,18 @@ public class Answer {
   @Index Long bnvariableCause; 
   @Index Long bnvariableEffect; 
   Boolean value; 
+  String comment; 
+  Boolean value2; 
 
   private Answer() {};
 
-  public Answer(String userId, Long bnvariableCause, Long bnvariableEffect, Boolean value) {
+  public Answer(String userId, Long bnvariableCause, Long bnvariableEffect) {
 	  this.userId = userId; 
 	  this.bnvariableCause = bnvariableCause; 
 	  this.bnvariableEffect = bnvariableEffect; 
-	  this.value = value; 
+	  this.value = null; 
+	  this.value2 = null; 
+	  this.comment = ""; 
   }
 
 public Long getUniqueId() {
@@ -60,6 +64,22 @@ public Boolean getValue() {
 
 public void setValue(Boolean value) {
 	this.value = value;
+}
+
+public String getComment() {
+	return comment;
+}
+
+public void setComment(String comment) {
+	this.comment = comment;
+}
+
+public Boolean getValue2() {
+	return value2;
+}
+
+public void setValue2(Boolean value2) {
+	this.value2 = value2;
 }
   
   

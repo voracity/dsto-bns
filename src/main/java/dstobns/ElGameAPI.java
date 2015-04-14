@@ -84,6 +84,37 @@ public class ElGameAPI {
       return variable;
   }
   
+  @ApiMethod(
+		  name = "saveAnswer", 
+		  path = "put-answer", 
+		  httpMethod = HttpMethod.POST
+		  )
+  // The request that invokes this method should provide data that
+  // conforms to the fields defined in NewVariableForm
+  public Answer saveAnswer(final User user, 
+		  @Named("uniqueId") Long uniqueId, 
+		  @Named("comment") String comment, 
+		  @Named("value") Boolean value
+		  )
+				  throws UnauthorizedException {
+
+      // If the user is not logged in, throw an UnauthorizedException
+      if (user == null) {
+          throw new UnauthorizedException("Authorization required");
+      }
+      
+      Answer answer = ofy().load().key(Key.create(Answer.class, uniqueId)).now(); 
+      
+      answer.setValue(value); 
+      answer.setComment(comment); 
+      
+      // Save the entity in the datastore
+      ofy().save().entity(answer).now(); 
+
+      // Return the profile
+      return answer;
+  }
+  
   @ApiMethod(name = "retrieveVariables", path = "get-variables", httpMethod = HttpMethod.GET)
   // Retrieve all variables 
   public List<BNVariable> retrieveVariables(final User user)
@@ -128,7 +159,7 @@ public class ElGameAPI {
     		  
     		  if(answer == null) {
     			  
-    			  answer = new Answer(user.getUserId(), variableCause.getUniqueId(), variableEffect.getUniqueId(), null); 
+    			  answer = new Answer(user.getUserId(), variableCause.getUniqueId(), variableEffect.getUniqueId()); 
     			  // Save the entity in the datastore 
     		      ofy().save().entity(answer).now(); 
     		  }

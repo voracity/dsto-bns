@@ -129,7 +129,7 @@ elgameAngApp.controllers.controller('OAuth2LoginModalCtrl',
 
 /**
  * @ngdoc controller
- * @name NewVariableCtrl
+ * @name EditVariablesCtrl
  *
  * @description
  * A controller used for the new_variable page, where a variable can be created and stored. 
