@@ -75,6 +75,7 @@ public class ElGameAPI {
           throw new UnauthorizedException("Authorization required");
       }
       
+      if(uniqueId == -1) uniqueId = null; 
       BNVariable variable = new BNVariable(uniqueId, name, label, states); 
       
       // Save the entity in the datastore

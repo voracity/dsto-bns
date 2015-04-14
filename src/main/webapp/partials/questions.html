@@ -20,7 +20,13 @@
    			<accordion-group heading="Select a question to input your answers..." is-open="status.isFirstOpen" is-disabled="status.isFirstDisabled"> 
      				This content is straight in the template.
    			</accordion-group>
-   			<accordion-group heading="Does the state of {{bnvariableCause.name}} *directly* influence the state of..." ng-repeat="bnvariableCause in bnvariablesAsync">
+   			<accordion-group ng-repeat="bnvariableCause in bnvariablesAsync">
+   				<accordion-heading>
+   					Does the state of {{bnvariableCause.name}} *directly* influence the state of...
+   					<div class="col-sm-4">
+      					<progressbar type="success" value="getQuestionsAnswered(bnvariableCause.uniqueId)/getTotalQuestions(bnvariableCause.uniqueId)*100"><i>{{getQuestionsAnswered(bnvariableCause.uniqueId)}} / {{getTotalQuestions(bnvariableCause.uniqueId)}}</i></progressbar>
+      				</div>
+   				</accordion-heading>
        				<hr>
        				<div ng-repeat="bnvariableEffect in bnvariablesAsync">
        					<div ng-hide="{{bnvariableCause.uniqueId === bnvariableEffect.uniqueId}}">
@@ -51,19 +57,6 @@
        					</div>
        				</div>
    			</accordion-group>
-   			<accordion-group is-open="status.open">
-       			<accordion-heading>
-           			<div class="row">
-           				I can have markup, too! 
-           				<div class="col-sm-4">
-           					<progressbar class="progress-striped active" max="200" value="166" type="danger"><i>166 / 200</i></progressbar>
-           				</div>
-           				
-           				<!-- <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i> -->
-           			</div>
-   				</accordion-heading>
-       				This is just some content to illustrate fancy headings.
-			</accordion-group>
 		</accordion>
 
     </div>

@@ -153,7 +153,7 @@ elgameAngApp.controllers.controller('EditVariablesCtrl', function ($scope, $log,
     
     // setup a new bnvariable object that can be selected to create a new variable and add to the list 
 	$scope.bnvariableAsync = {selected : {
-								'uniqueId' : null, 
+								'uniqueId' : -1, 
 								'name' : "New Variable", 
 								'label' : "", 
 								'states' : "" }
@@ -202,7 +202,7 @@ elgameAngApp.controllers.controller('EditVariablesCtrl', function ($scope, $log,
         
         $scope.loading = true;
         gapi.client.elgameapi.saveVariable({
-        	'uniqueId' : $scope.bnvariableAsync.selected.uniqueId, 
+        	'uniqueId' : $scope.bnvariableAsync.selected.uniqueId || null, 
         	'name' : $scope.bnvariableAsync.selected.name, 
         	'label' : $scope.bnvariableAsync.selected.label, 
         	'states' : $scope.bnvariableAsync.selected.states 
@@ -215,7 +215,7 @@ elgameAngApp.controllers.controller('EditVariablesCtrl', function ($scope, $log,
                         var errorMessage = resp.error.message || '';
                         $scope.messages = 'Failed to save a new variable : ' + errorMessage;
                         $scope.alertStatus = 'warning';
-                        $log.error($scope.messages + ' Transaction : ' + JSON.stringify($scope.transaction));
+                        $log.error($scope.messages + ' Variable : ' + JSON.stringify($scope.transaction));
 
                         if (resp.code && resp.code == HTTP_ERRORS.UNAUTHORIZED) {
                             oauth2Provider.showLoginModal();
@@ -229,7 +229,7 @@ elgameAngApp.controllers.controller('EditVariablesCtrl', function ($scope, $log,
                         $scope.bnvariable = {};
                         // setup a new bnvariable object that can be selected to create a new variable and add to the list 
                     	$scope.bnvariableAsync = {selected : {
-                    								'uniqueId' : null, 
+                    								'uniqueId' : -1, 
                     								'name' : "New Variable", 
                     								'label' : "", 
                     								'states' : "" }

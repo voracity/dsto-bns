@@ -20,10 +20,28 @@ elgameAngApp.controllers.controller('ShowQuestionsCtrl', function (
 		    isFirstDisabled: true
 		};
 	
-	$scope.radioModel = null;
-	
 	$scope.bnvariablesAsync = [];
 	$scope.answersAsync = [];
+	
+	$scope.getTotalQuestions = function (causeVariableId) {
+		
+		var answersForCounting = $filter('filter')($scope.answersAsync, { bnvariableCause: causeVariableId }); 
+		return (answersForCounting.length-1);
+		
+	}; 
+	$scope.getQuestionsAnswered = function (causeVariableId) {
+		
+		var answersForCounting = $filter('filter')($scope.answersAsync, { bnvariableCause: causeVariableId }); 
+		var total = 0;
+	    for(var i = 0; i < answersForCounting.length; i++){
+	        if (answersForCounting[i].value == true || answersForCounting[i].value == false) {
+	        	total += 1; 
+	        }
+	    }
+	    return total;
+	}; 
+	
+
 	
 	gapi.client.elgameapi.retrieveVariables().execute(function (resp) {
         $scope.$apply(function () {
