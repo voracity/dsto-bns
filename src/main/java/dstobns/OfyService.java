@@ -1,6 +1,7 @@
 package dstobns;
 
 import dstobns.domain.Answer;
+import dstobns.domain.AnswerFrequencies;
 import dstobns.domain.BNVariable;
 import dstobns.domain.Profile;
 

@@ -16,6 +16,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.Query;
 
 import dstobns.domain.Answer;
+import dstobns.domain.AnswerFrequencies;
 import dstobns.domain.BNVariable;
 import dstobns.domain.Profile;
 
@@ -40,7 +41,7 @@ public class ElGameAPI {
 		  throw new UnauthorizedException("Authorization required");
 	  }
 	  
-	  String userId = user.getUserId();
+	  String userId = user.getUserId(); 
 	  
 	  // Get the Profile from the datastore if it exists, otherwise create a new one
       Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
@@ -60,8 +61,7 @@ public class ElGameAPI {
 		  path = "put-variable", 
 		  httpMethod = HttpMethod.POST
 		  )
-  // The request that invokes this method should provide data that
-  // conforms to the fields defined in NewVariableForm
+  // Store the variable in the datastore and return it 
   public BNVariable saveVariable(final User user, 
 		  @Named("uniqueId") Long uniqueId, 
 		  @Named("name") String name, 
@@ -81,7 +81,7 @@ public class ElGameAPI {
       // Save the entity in the datastore
       ofy().save().entity(variable).now();
 
-      // Return the profile
+      // Return the variable
       return variable;
   }
   
@@ -90,8 +90,7 @@ public class ElGameAPI {
 		  path = "put-answer", 
 		  httpMethod = HttpMethod.POST
 		  )
-  // The request that invokes this method should provide data that
-  // conforms to the fields defined in NewVariableForm
+  // 
   public Answer saveAnswer(final User user, 
 		  @Named("uniqueId") Long uniqueId, 
 		  @Named("comment") String comment, 
@@ -113,7 +112,60 @@ public class ElGameAPI {
       ofy().save().entity(answer).now(); 
 
       // Return the profile
-      return answer;
+      return answer; 
+  }
+  
+  @ApiMethod(
+		  name = "retrieveAnswerFrequencies", 
+		  path = "get-answer-frequencies", 
+		  httpMethod = HttpMethod.GET
+		  )
+  // Get the answer objects from the datastore, sum them and put them into answerFrequency objects for returning  
+  public List<AnswerFrequencies> retrieveAnswerFrequencies(final User user) 
+		  throws UnauthorizedException {
+
+      // If the user is not logged in, throw an UnauthorizedException
+      if (user == null) {
+          throw new UnauthorizedException("Authorization required");
+      }
+      
+      List<BNVariable> variables = ofy().load().type(BNVariable.class).list(); 
+      
+      List<Answer> answers = new ArrayList<Answer>(); 
+      
+      List<AnswerFrequencies> answerFrequenciesList = new ArrayList<AnswerFrequencies>(); 
+      
+      for(BNVariable variableCause : variables) { 
+    	  
+    	  ArrayList<Integer> frequencies = new ArrayList<Integer>();  
+    	  
+    	  for(BNVariable variableEffect : variables) {
+    		  
+    		  Query<Answer> query = ofy().load().type(Answer.class);
+
+    		  query = query.filter("bnvariableCause", variableCause.getUniqueId())
+			  .filter("bnvariableEffect", variableEffect.getUniqueId()); 
+    	        
+    	      answers = query.list(); 
+    	      
+    	      Integer frequency = new Integer(0); 
+    	      for(Answer answer : answers) {
+    	    	  if(answer.getValue() != null) {
+    	    		  if(answer.getValue()) frequency++; 
+    	    	  }
+    	      }
+    	      
+    	      frequencies.add(frequency); 
+
+    		  answers.clear(); 
+    	  }
+    	  
+    	  AnswerFrequencies answerFrequencies = new AnswerFrequencies(variableCause.getName(), frequencies); 
+    	  answerFrequenciesList.add(answerFrequencies); 
+      }
+      
+      return answerFrequenciesList; 
+      
   }
   
   @ApiMethod(name = "retrieveVariables", path = "get-variables", httpMethod = HttpMethod.GET)
@@ -134,8 +186,7 @@ public class ElGameAPI {
 		  path = "get-answers", 
 		  httpMethod = HttpMethod.GET
 		  )
-  // The request that invokes this method should provide data that
-  // conforms to the fields defined in NewVariableForm
+  // Get this user's answer objects from the datastore and create them if not already present  
   public List<Answer> retrieveAnswers(final User user)
 				  throws UnauthorizedException {
 

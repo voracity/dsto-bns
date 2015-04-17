@@ -1,4 +1,4 @@
-<div ng-controller="ShowQuestionsCtrl">
+<div ng-controller="ViewAnswersCtrl">
     <div class="row">
         <div class="col-lg-12">
             <div id="messages" class="alert alert-{{alertStatus}}" ng-show="messages">
@@ -12,11 +12,24 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <h3>View a count of the answers</h3> 
+            <h3>View frequencies of the answers</h3> 
         </div>
     </div>
 
-		
+    <table st-table="answerFrequenciesAsync" class="table table-striped">
+		<thead>
+			<tr>
+				<th>-</th>
+				<th ng-repeat="row in answerFrequenciesAsync">{{row.variableName}}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="row in answerFrequenciesAsync">
+				<td>{{row.variableName}}</td>
+				<td ng-repeat="frequency in row.frequencies track by $index">{{frequency}}</td>
+			</tr>
+		</tbody>
+	</table>
 
     </div>
 </div>

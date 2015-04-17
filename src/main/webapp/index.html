@@ -9,7 +9,7 @@
 </head>
 
 <!-- Restore the credential from cookie if stored by calling initSignInButton() -->
-<body ng-controller="RootCtrl" ng-init="initSignInButton()">	
+<body ng-controller="RootCtrl" ng-init="initSignInButton()" ng-show="is_backend_ready">	
 	
 	<nav class="navbar navbar-default">
 	  <div class="container-fluid">
@@ -33,7 +33,7 @@
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
 	          <ul class="dropdown-menu" role="menu">
 	            <li><a href="#/edit_variables">Edit/Create Variable</a></li>
-	            <li><a href="#">Something else here</a></li>
+	            <li><a href="#/view_answers">View Answers</a></li>
 	            <li class="divider"></li>
 	            <li><a href="#">Separated link</a></li>
 	            <li class="divider"></li>
@@ -76,9 +76,11 @@
 		<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 	    <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 	  	<script type="text/javascript" src="js/ui-bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
+	  	<script type="text/javascript" src="bower_components/angular-smart-table/dist/smart-table.js"></script>
 	    <script type="text/javascript" src="js/base.js"></script>
 	    <script type="text/javascript" src="js/controllers.js"></script>
 	    <script type="text/javascript" src="js/questions.js"></script> 
+	    <script type="text/javascript" src="js/answers.js"></script> 
 	  	
 	    <script type="text/javascript">
 	        function init() {

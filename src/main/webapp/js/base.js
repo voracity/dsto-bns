@@ -29,7 +29,6 @@ elgame.storeVariable = function(name, label) {
       });
 };
 
-
 /**
  * Initializes the application.
  * @param {string} apiRoot Root of the API's path.
@@ -40,7 +39,7 @@ elgame.init = function(apiRoot) {
   var apisToLoad;
   var callback = function() {
     if (--apisToLoad == 0) {
-      angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
+    	angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
 		// Google libraries so the Google JavaScript library is ready in the angular modules.
     }
   }
@@ -73,9 +72,9 @@ var angApp = angular.module('elgameAngApp',
                     templateUrl: '/partials/edit_variables.html',
                     controller: 'EditVariablesCtrl'
                 }).
-                when('/conference/create', {
-                    templateUrl: '/partials/create_conferences.html',
-                    controller: 'CreateConferenceCtrl'
+                when('/view_answers', {
+                    templateUrl: '/partials/view_answers.html',
+                    controller: 'ViewAnswersCtrl'
                 }).
                 when('/conference/detail/:websafeConferenceKey', {
                     templateUrl: '/partials/conference_detail.html',

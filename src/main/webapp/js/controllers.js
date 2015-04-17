@@ -15,7 +15,7 @@ var elgameAngApp = elgameAngApp || {};
  * Angular module for controllers.
  *
  */
-elgameAngApp.controllers = angular.module('elgameControllers', ['ui.bootstrap', 'ngSanitize', 'ui.select']);
+elgameAngApp.controllers = angular.module('elgameControllers', ['ui.bootstrap', 'ngSanitize', 'ui.select', 'smart-table']);
 
 /**
  * @ngdoc controller
@@ -28,6 +28,8 @@ elgameAngApp.controllers = angular.module('elgameControllers', ['ui.bootstrap', 
  */
 elgameAngApp.controllers.controller('RootCtrl', function ($scope, $location, oauth2Provider) {
 
+	$scope.is_backend_ready = true;
+	
     /**
      * Returns if the viewLocation is the currently viewed page.
      *
