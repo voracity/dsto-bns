@@ -116,6 +116,9 @@ elgameAngApp.controllers.controller('ShowQuestionsCtrl', function (
         
         var currentAnswer = $filter('filter')($scope.answersAsync, { uniqueId: answerIdInput })[0]; 
         
+        // a comment is not required but null cannot be sent via the API 
+        if(!currentAnswer.comment) currentAnswer.comment = ""; 
+        
         $scope.loading = true;
         gapi.client.elgameapi.saveAnswer({
         	'uniqueId' : currentAnswer.uniqueId, 

@@ -4,6 +4,7 @@ import dstobns.domain.Answer;
 import dstobns.domain.AnswerFrequencies;
 import dstobns.domain.BNVariable;
 import dstobns.domain.Profile;
+import dstobns.domain.Tier;
 
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
@@ -19,6 +20,7 @@ public class OfyService {
     static {
         factory().register(BNVariable.class);
         factory().register(Answer.class);
+        factory().register(Tier.class);
         factory().register(Profile.class);
     }
 

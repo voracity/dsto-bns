@@ -13,14 +13,16 @@ public class BNVariable {
   String name; 
   String label; 
   List<String> states; 
+  Integer tierLevel; 
 
   private BNVariable() {};
 
-  public BNVariable(Long uniqueId, String name, String label, String statesStr) {
+  public BNVariable(Long uniqueId, String name, String label, String statesStr, Integer tierLevel) {
 	  this.uniqueId = uniqueId; 
 	  this.name = name; 
 	  this.label = label; 
 	  this.states = Arrays.asList(statesStr.split(",[ ]*"));
+	  this.tierLevel = tierLevel; 
   }
   
 public Long getUniqueId() {
@@ -54,7 +56,13 @@ public List<String> getStates() {
 public void setStates(List<String> states) {
 	this.states = states;
 }
-  
-  
+
+public Integer getTierLevel() {
+	return tierLevel;
+}
+
+public void setTierLevel(Integer tierLevel) {
+	this.tierLevel = tierLevel;
+}
   
 }
