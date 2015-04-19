@@ -39,8 +39,20 @@ elgame.init = function(apiRoot) {
   var apisToLoad;
   var callback = function() {
     if (--apisToLoad == 0) {
-    	angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
+   		// Bootstrap the angular module after loading the
 		// Google libraries so the Google JavaScript library is ready in the angular modules.
+    	if (!sessionStorage.getItem("signedIn")) {
+    		angular.bootstrap(document, ['elgameAngApp']); 
+    	}
+    	else {
+			/// Auth and re-bootstrap if need be
+			var CLIENT_ID = '301169776727-fafp837c210nmefpi29phjnrpcmq58j7.apps.googleusercontent.com';
+			var SCOPES = 'email';
+			gapi.auth.authorize({client_id: CLIENT_ID,
+			    scope: SCOPES, immediate: true}, function() {
+			    	angular.bootstrap(document, ['elgameAngApp']); // Bootstrap the angular module after loading the 
+			});
+    	}
     }
   }
 
@@ -128,6 +140,7 @@ angApp.factory('oauth2Provider', function ($modal) {
         gapi.auth.signOut();
         // Explicitly set the invalid access token in order to make the API calls fail.
         gapi.auth.setToken({access_token: ''})
+        sessionStorage.removeItem("signedIn");
         oauth2Provider.signedIn = false;
     };
 
@@ -136,12 +149,20 @@ angApp.factory('oauth2Provider', function ($modal) {
      *
      * @returns {*|Window}
      */
+    elgame.modalOpening = false;
     oauth2Provider.showLoginModal = function() {
-        var modalInstance = $modal.open({
-            templateUrl: '/partials/login.modal.html',
-            controller: 'OAuth2LoginModalCtrl'
-        });
-        return modalInstance;
+    	if (!elgame.modalOpening && $(".loginModal").length==0) {
+    		elgame.modalOpening = true;
+	        var modalInstance = $modal.open({
+	            templateUrl: '/partials/login.modal.html',
+	            controller: 'OAuth2LoginModalCtrl',
+	            windowClass: 'loginModal',
+	        }).opened.then(function() {
+	        	elgame.modalOpening = false;
+	        }, function() {
+	        	elgame.modalOpening = false;
+	        });
+    	}
     };
 
     return oauth2Provider;
