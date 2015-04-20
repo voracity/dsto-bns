@@ -19,6 +19,7 @@ import dstobns.domain.Answer;
 import dstobns.domain.AnswerFrequencies;
 import dstobns.domain.BNVariable;
 import dstobns.domain.Profile;
+import dstobns.domain.Tier;
 
 import javax.inject.Named;
 
@@ -33,28 +34,6 @@ import javax.inject.Named;
     audiences = {Constants.ANDROID_AUDIENCE}
 )
 public class ElGameAPI {
-
-  @ApiMethod(name = "setDisplayName", path = "setDisplayName")
-  public Profile setDisplayName(final User user, @Named("name") String name) throws UnauthorizedException {
-	  
-	  if (user == null) {
-		  throw new UnauthorizedException("Authorization required");
-	  }
-	  
-	  String userId = user.getUserId(); 
-	  
-	  // Get the Profile from the datastore if it exists, otherwise create a new one
-      Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
-      if (profile == null) profile = new Profile(user); 
-      
-	  profile.setDisplayName(name);
-	  
-	  // Save the entity in the datastore
-      ofy().save().entity(profile).now();
-      
-	  return profile;
-	  
-  }
   
   @ApiMethod(
 		  name = "saveVariable", 
@@ -66,7 +45,8 @@ public class ElGameAPI {
 		  @Named("uniqueId") Long uniqueId, 
 		  @Named("name") String name, 
 		  @Named("label") String label, 
-		  @Named("states") String states
+		  @Named("states") String states, 
+		  @Named("tierLevel") Integer tierLevel 
 		  )
 				  throws UnauthorizedException {
 
@@ -76,7 +56,7 @@ public class ElGameAPI {
       }
       
       if(uniqueId == -1) uniqueId = null; 
-      BNVariable variable = new BNVariable(uniqueId, name, label, states); 
+      BNVariable variable = new BNVariable(uniqueId, name, label, states, tierLevel); 
       
       // Save the entity in the datastore
       ofy().save().entity(variable).now();
@@ -244,7 +224,72 @@ public class ElGameAPI {
     return profile;
     
   }
-
   
+  @ApiMethod(name = "setDisplayName", path = "setDisplayName")
+  public Profile setDisplayName(final User user, @Named("name") String name) throws UnauthorizedException {
+	  
+	  if (user == null) {
+		  throw new UnauthorizedException("Authorization required");
+	  }
+	  
+	  String userId = user.getUserId(); 
+	  
+	  // Get the Profile from the datastore if it exists, otherwise create a new one
+      Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
+      if (profile == null) profile = new Profile(user); 
+      
+	  profile.setDisplayName(name);
+	  
+	  // Save the entity in the datastore
+      ofy().save().entity(profile).now();
+      
+	  return profile;
+	  
+  }
+
+  @ApiMethod(
+		  name = "saveTier", 
+		  path = "put-tier", 
+		  httpMethod = HttpMethod.POST
+		  )
+  // Takes the name and level, creates a new Tier object and saves to the datastore 
+  public Tier saveTier(final User user, 
+		  @Named("name") String name, 
+		  @Named("level") Integer level
+		  )
+				  throws UnauthorizedException {
+
+      // If the user is not logged in, throw an UnauthorizedException
+      if (user == null) {
+          throw new UnauthorizedException("Authorization required");
+      }
+      
+      Tier tier = new Tier(name, level); 
+      
+      // Save the entity in the datastore
+      ofy().save().entity(tier).now(); 
+
+      // Return the profile
+      return tier; 
+  }
+  
+  @ApiMethod(
+		  name = "retrieveTiers", 
+		  path = "get-tiers", 
+		  httpMethod = HttpMethod.GET 
+		  )
+  // Get this tier objects from the datastore and send back  
+  public List<Tier> retrieveTiers(final User user)
+				  throws UnauthorizedException {
+
+      // If the user is not logged in, throw an UnauthorizedException
+      if (user == null) {
+          throw new UnauthorizedException("Authorization required");
+      }
+      
+      List<Tier> tiers = ofy().load().type(Tier.class).list(); 
+      
+      return tiers;
+  }
   
 }

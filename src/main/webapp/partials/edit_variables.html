@@ -57,11 +57,55 @@
                     <input id="states" type="text" name="states" ng-model="bnvariableAsync.selected.states" class="form-control"
                            ng-required="true"/>
                 </div>
+                
+                <div class="form-group">
+	                <ui-select 	ng-model="tiersAsync.selected" 
+	  						theme="bootstrap" 
+	  						ng-disabled="disabled" 
+	  						style="min-width: 300px;" 
+	  						title="Select a tier">
+			    		<ui-select-match placeholder="Select a tier...">{{$select.selected.name}}</ui-select-match>
+			   			<ui-select-choices repeat="tier as tier in tiersAsync">
+					    	<div ng-bind-html="tier.name | highlight: $select.search"></div>
+					    		<small>
+					        		level: {{tier.level}}
+					      		</small>
+			    		</ui-select-choices>
+	  				</ui-select>
+  				</div>
 
                 <button ng-click="saveVariable(NewVariableForm)" class="btn btn-primary"
                         ng-disabled="!isValidVariable(NewVariableForm) || loading">Save
                 </button>
             </form>
+            
+            <hr>
+            
+            <h3>Create a new tier</h3>
+            
+            <form name="NewTierForm" novalidate role="form">
+            	
+                <div class="form-group">
+                    <label for="tierName">Name <span class="required">*</span></label>
+                    <span class="label label-danger"
+                        ng-show="NewTierForm.name.$error.required">Required!</span>
+                    <input id="tierName" type="text" name="tierName" ng-model="newTier.name" class="form-control"
+                           ng-required="true"/>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tierLevel">Level <span class="required">*</span></label>
+                    <span class="label label-danger"
+                        ng-show="NewTierForm.label.$error.required">Required!</span>
+                    <input id="tierLevel" type="text" name="tierLevel" ng-model="newTier.level" class="form-control"
+                           ng-required="true"/>
+                </div>
+
+                <button ng-click="saveTier(NewTierForm)" class="btn btn-primary"
+                        ng-disabled="!isValidTier(NewTierForm) || loading">Save
+                </button>
+            </form>
+            
         </div>
     </div>
 </div>

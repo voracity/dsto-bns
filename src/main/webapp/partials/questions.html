@@ -24,12 +24,12 @@
    				<accordion-heading>
    					Does the state of {{bnvariableCause.name}} *directly* influence the state of...
    					<div class="col-sm-4">
-      					<progressbar type="success" value="getQuestionsAnswered(bnvariableCause.uniqueId)/getTotalQuestions(bnvariableCause.uniqueId)*100"><i>{{getQuestionsAnswered(bnvariableCause.uniqueId)}} / {{getTotalQuestions(bnvariableCause.uniqueId)}}</i></progressbar>
+      					<progressbar type="success" value="getQuestionsAnswered(bnvariableCause.uniqueId)/getTotalQuestions(bnvariableCause)*100"><i>{{getQuestionsAnswered(bnvariableCause.uniqueId)}} / {{getTotalQuestions(bnvariableCause)}}</i></progressbar>
       				</div>
    				</accordion-heading>
        				<hr>
        				<div ng-repeat="bnvariableEffect in bnvariablesAsync">
-       					<div ng-hide="{{bnvariableCause.uniqueId === bnvariableEffect.uniqueId}}">
+       					<div ng-hide="{{bnvariableCause.uniqueId === bnvariableEffect.uniqueId || bnvariableCause.tierLevel >= bnvariableEffect.tierLevel}}">
      						<form name="AnswerForm" novalidate role="form" class="form-inline">
 								<div ng-repeat="answer in answersAsync | filter:{ bnvariableCause : bnvariableCause.uniqueId, bnvariableEffect : bnvariableEffect.uniqueId}">
 									<div class="col-md-3 form-group">
