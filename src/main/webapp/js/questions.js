@@ -23,10 +23,15 @@ elgameAngApp.controllers.controller('ShowQuestionsCtrl', function (
 	$scope.bnvariablesAsync = [];
 	$scope.answersAsync = [];
 	
-	$scope.getTotalQuestions = function (causeVariableId) {
+	$scope.getTotalQuestions = function (causeVariable) {
 		
-		var answersForCounting = $filter('filter')($scope.answersAsync, { bnvariableCause: causeVariableId }); 
-		return (answersForCounting.length-1);
+		var total = 0;
+	    for(var i = 0; i < $scope.bnvariablesAsync.length; i++){
+	        if ($scope.bnvariablesAsync[i].tierLevel > causeVariable.tierLevel) {
+	        	total += 1; 
+	        }
+	    }
+	    return total;
 		
 	}; 
 	$scope.getQuestionsAnswered = function (causeVariableId) {

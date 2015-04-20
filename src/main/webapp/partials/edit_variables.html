@@ -58,19 +58,21 @@
                            ng-required="true"/>
                 </div>
                 
-                <ui-select 	ng-model="tiersAsync.selected" 
-  						theme="bootstrap" 
-  						ng-disabled="disabled" 
-  						style="min-width: 300px;" 
-  						title="Select a tier">
-		    		<ui-select-match placeholder="Select a tier...">{{$select.selected.name}}</ui-select-match>
-		   			<ui-select-choices repeat="tier as tier in tiersAsync">
-				    	<div ng-bind-html="tier.name | highlight: $select.search"></div>
-				    		<small>
-				        		level: {{tier.level}}
-				      		</small>
-		    		</ui-select-choices>
-  				</ui-select>
+                <div class="form-group">
+	                <ui-select 	ng-model="tiersAsync.selected" 
+	  						theme="bootstrap" 
+	  						ng-disabled="disabled" 
+	  						style="min-width: 300px;" 
+	  						title="Select a tier">
+			    		<ui-select-match placeholder="Select a tier...">{{$select.selected.name}}</ui-select-match>
+			   			<ui-select-choices repeat="tier as tier in tiersAsync">
+					    	<div ng-bind-html="tier.name | highlight: $select.search"></div>
+					    		<small>
+					        		level: {{tier.level}}
+					      		</small>
+			    		</ui-select-choices>
+	  				</ui-select>
+  				</div>
 
                 <button ng-click="saveVariable(NewVariableForm)" class="btn btn-primary"
                         ng-disabled="!isValidVariable(NewVariableForm) || loading">Save
